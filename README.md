@@ -34,4 +34,12 @@ To install the JOCL and JOGL libraries, do the following:
 9. Your `External Libraries` tab should look like this:
 
     ![Alt](images/library.PNG "Library installed")
-10. Done! Try running the code.
+10. Done! Move on to the Setup section to setup the project to run in IntelliJ
+
+# Setup
+To setup the project to run in IntelliJ:
+1. Navigate to `File->Project Structure->Project->Project SDK` and select your Java SDK (SDK 8 or above). You may need to specify the path
+manually if the SDK does not show up.
+2. Set `Project Language Level` (Just below the `Project SDK` setting) to 8 or above.
+3. Set the 'Compiler Output Directory' (Just below `Project Language Level`) to the `out/` folder inside the project.
+4. Hit `Apply` and `OK`, and then build and run the code!
