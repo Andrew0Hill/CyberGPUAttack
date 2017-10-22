@@ -8,6 +8,7 @@ import com.jogamp.opencl.*;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 import java.util.Random;
 
 public class HashCompute {
@@ -22,6 +23,7 @@ public class HashCompute {
     static final String KERNEL_NAME = "HashKernel.cl";
     static final String KERNEL_FUNC_NAME = "compute_hashes";
     static final String LOG_NAME = "strings.txt";
+    static HashMap<Integer,String> computed_hashes;
     static Random gen = new Random();
     static StringBuilder rand_string = new StringBuilder();
 
@@ -52,6 +54,7 @@ public class HashCompute {
 
             for (int i = 0; i < NUM_STRINGS; ++i) {
                 String s = generateString(STRING_LENGTH);
+
                 buf.put(s.getBytes());
                 output_file.write(s+"\n");
             }
@@ -115,12 +118,26 @@ public class HashCompute {
         queue.putReadBuffer(output_hashes,true);
 
         IntBuffer buf = output_hashes.getBuffer();
+        computed_hashes = new HashMap<>(NUM_STRINGS);
+        int curr;
         try{
             File hash_output = new File("hashes.txt");
             BufferedWriter output = new BufferedWriter(new FileWriter(hash_output));
-            while(buf.hasRemaining()){
-                output.write(Integer.toHexString(buf.get()) + "\n");
+            BufferedReader input = new BufferedReader(new FileReader(new File(LOG_NAME)));
+            String current;
+            while(buf.hasRemaining() && (current = input.readLine()) != null){
+                curr = buf.get();
+                if (curr != 0) {
+                    output.write(Integer.toHexString(curr) + "\n");
+                    if(computed_hashes.get(curr) != null){
+                        System.out.println("Collision between " + computed_hashes.get(curr) + " and " + current);
+                    }
+                    computed_hashes.put(curr,current);
+                }else{
+                    break;
+                }
             }
+            input.close();
             output.close();
         }catch(IOException e){
             e.printStackTrace();
@@ -128,6 +145,7 @@ public class HashCompute {
 
         context.release();
 
+        System.out.println("Complete. Hash table has " + computed_hashes.size() + " entries.");
         }catch(java.io.IOException e){
             System.out.println("Could not locate kernel: " + KERNEL_NAME);
         }
