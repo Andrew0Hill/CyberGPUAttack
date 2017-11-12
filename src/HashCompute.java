@@ -4,6 +4,15 @@ HashCompute
 Calculates random string values, then send array to GPU for hashing.
  */
 import com.jogamp.opencl.*;
+import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import netscape.javascript.JSObject;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -11,12 +20,12 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Random;
 
-public class HashCompute {
+public class HashCompute extends Application {
     // Hashing constants
     static final int HASH_PRIME = 16777619;
     static final long HASH_OFFSET = 2166136261L;
 
-    static final int NUM_STRINGS = 1100000;
+    static final int NUM_STRINGS = 11000000;
     static int global_size;
     static int local_size;
     static final int STRING_LENGTH = 6;
@@ -26,6 +35,43 @@ public class HashCompute {
     static HashMap<Integer,String> computed_hashes;
     static Random gen = new Random();
     static StringBuilder rand_string = new StringBuilder();
+
+
+    Controller c;
+
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        FXMLLoader fxml_loader = new FXMLLoader(getClass().getResource("GUI.fxml"));
+        c = new Controller();
+        fxml_loader.setController(c);
+        Parent root = fxml_loader.load();
+        primaryStage.setTitle("Hello World");
+        primaryStage.setScene(new Scene(root, 960, 720));
+
+        primaryStage.show();
+        // Wait until the page is fully loaded before continuing.
+        c.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
+            @Override
+            public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldValue, Worker.State newValue) {
+                if(newValue == Worker.State.SUCCEEDED){
+                    postLoad();
+                }
+            }
+        });
+    }
+    // Function runs after page has been loaded.
+    public void postLoad(){
+        // Get reference to the window.
+        JSObject jso = (JSObject) c.getEngine().executeScript("window");
+        /*
+         * Use JSObject to call the "test" Javascript method.
+         * The 'call' method expects an Object[] containing each argument.
+         * To pass an array as a parameter, we create a new Object[] with the first element
+         * being a Integer[].
+         */
+        jso.call("test",new Object[] {new Integer[]{1,2,3,4,5}});
+
+    }
 
     public static String generateString(int length){
         rand_string.setLength(0);
@@ -66,7 +112,7 @@ public class HashCompute {
         }
     }
     public static void main(String[] args){
-
+        launch(args);
         // Array of OpenCL Platforms
         // Should be made editable through GUI
         CLPlatform platforms[] = CLPlatform.listCLPlatforms();
@@ -116,7 +162,7 @@ public class HashCompute {
         queue.putWriteBuffer(input_strings,false);
         queue.put1DRangeKernel(kernel,0,global_size,local_size);
         queue.putReadBuffer(output_hashes,true);
-
+        System.out.println("Compute complete.");
         IntBuffer buf = output_hashes.getBuffer();
         computed_hashes = new HashMap<>(NUM_STRINGS);
         int curr;
@@ -125,18 +171,21 @@ public class HashCompute {
             BufferedWriter output = new BufferedWriter(new FileWriter(hash_output));
             BufferedReader input = new BufferedReader(new FileReader(new File(LOG_NAME)));
             String current;
+            int collisions = 0;
             while(buf.hasRemaining() && (current = input.readLine()) != null){
                 curr = buf.get();
                 if (curr != 0) {
                     output.write(Integer.toHexString(curr) + "\n");
                     if(computed_hashes.get(curr) != null){
-                        System.out.println("Collision between " + computed_hashes.get(curr) + " and " + current);
+                        ++collisions;
+                        //System.out.println("Collision between " + computed_hashes.get(curr) + " and " + current);
                     }
                     computed_hashes.put(curr,current);
                 }else{
                     break;
                 }
             }
+            System.out.println("There were " + collisions + " collisions detected.");
             input.close();
             output.close();
         }catch(IOException e){
