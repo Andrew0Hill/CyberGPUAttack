@@ -25,7 +25,7 @@ public class HashCompute extends Application {
     static final int HASH_PRIME = 16777619;
     static final long HASH_OFFSET = 2166136261L;
 
-    static final int NUM_STRINGS = 11000000;
+    static final int NUM_STRINGS = 1100;
     static int global_size;
     static int local_size;
     static final int STRING_LENGTH = 6;
@@ -69,7 +69,7 @@ public class HashCompute extends Application {
          * To pass an array as a parameter, we create a new Object[] with the first element
          * being a Integer[].
          */
-        jso.call("test",new Object[] {new Integer[]{1,2,3,4,5}});
+        jso.call("initialize",new Object[] {new Integer[]{1,2,3,4,5}});
 
     }
 
