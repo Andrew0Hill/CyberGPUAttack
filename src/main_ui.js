@@ -25,7 +25,7 @@ function initialize(){
         }
     }
     drawGrid();
-    d3.interval(updateGrid,1000);
+    d3.interval(updateGrid,2000);
 }
 function drawGrid(){
     for(var i = 0; i < cells.length; ++i){
@@ -43,7 +43,10 @@ function drawGrid(){
 function updateGrid(){
     generateRandColls();
     var grid_cells = d3.selectAll("rect")
-        .data(cells).style("fill",
+        .data(cells)
+        .transition()
+        .duration(1500)
+        .style("fill",
             function(d){
                 return d3.interpolateYlOrRd(d3.scaleLinear().domain([0,50]).range([0,1])(d.collisions));
             }
