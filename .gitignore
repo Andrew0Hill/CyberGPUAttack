@@ -1,2 +1,4 @@
 .idea/
 /out/production/
+/src/d3-scale-chromatic.js
+/src/d3.min.js
