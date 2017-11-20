@@ -1,28 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.web.WebView?>
 
-<VBox prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
-  <children>
-    <MenuBar VBox.vgrow="NEVER">
-      <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
-      <StackPane prefHeight="720.0" prefWidth="960.0">
-         <children>
-            <WebView fx:id="D3View" prefHeight="200.0" prefWidth="200.0" />
-         </children>
-      </StackPane>
-  </children>
+<VBox maxHeight="720.0" maxWidth="960.0" minHeight="720.0" minWidth="960.0" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TabPane maxHeight="720.0" maxWidth="960.0" minHeight="720.0" minWidth="960.0" prefHeight="720.0" prefWidth="960.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Birthday Attack Info">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+          <Tab text="Hash Visualization">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="691.0" prefWidth="960.0">
+                     <children>
+                        <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="691.0" prefWidth="960.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" percentWidth="75.0" prefWidth="0.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" percentWidth="25.0" prefWidth="0.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <WebView fx:id="D3View" minHeight="-Infinity" minWidth="-Infinity" prefHeight="691.0" prefWidth="960.0" />
+                              <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                                 <children>
+                                    <TitledPane animated="false" collapsible="false" layoutX="19.0" layoutY="420.0" prefHeight="79.0" prefWidth="202.0" text="OpenCL Device">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="63.0" prefWidth="200.0">
+                                             <children>
+                                                <ChoiceBox fx:id="DeviceDropdown" layoutX="13.0" layoutY="14.0" prefHeight="25.0" prefWidth="175.0" />
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </TitledPane>
+                                    <TitledPane animated="false" collapsible="false" layoutX="19.0" layoutY="519.0" prefHeight="158.0" prefWidth="202.0" text="Start/Stop Visualization">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="129.0" prefWidth="200.0">
+                                             <children>
+                                                <Button fx:id="StartButton" layoutX="13.0" layoutY="14.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="175.0" text="Start Visualization" />
+                                                <Button fx:id="StopButton" disable="true" layoutX="13.0" layoutY="71.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="175.0" text="Stop Visualization" />
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </TitledPane>
+                                    <TextFlow layoutX="20.0" layoutY="14.0" prefHeight="388.0" prefWidth="200.0" />
+                                 </children>
+                              </Pane>
+                           </children>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
 </VBox>
