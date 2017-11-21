@@ -39,7 +39,7 @@
                               <WebView fx:id="D3View" minHeight="-Infinity" minWidth="-Infinity" prefHeight="691.0" prefWidth="960.0" />
                               <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                                  <children>
-                                    <TitledPane animated="false" collapsible="false" layoutX="19.0" layoutY="420.0" prefHeight="79.0" prefWidth="202.0" text="OpenCL Device">
+                                    <TitledPane animated="false" collapsible="false" layoutX="19.0" layoutY="479.0" prefHeight="79.0" prefWidth="202.0" text="OpenCL Device">
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="63.0" prefWidth="200.0">
                                              <children>
@@ -48,12 +48,11 @@
                                           </AnchorPane>
                                       </content>
                                     </TitledPane>
-                                    <TitledPane animated="false" collapsible="false" layoutX="19.0" layoutY="519.0" prefHeight="158.0" prefWidth="202.0" text="Start/Stop Visualization">
+                                    <TitledPane animated="false" collapsible="false" layoutX="20.0" layoutY="574.0" prefHeight="103.0" prefWidth="202.0" text="Start/Stop Visualization">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="129.0" prefWidth="200.0">
                                              <children>
-                                                <Button fx:id="StartButton" layoutX="13.0" layoutY="14.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="175.0" text="Start Visualization" />
-                                                <Button fx:id="StopButton" disable="true" layoutX="13.0" layoutY="71.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="175.0" text="Stop Visualization" />
+                                                <Button fx:id="StartButton" layoutX="13.0" layoutY="14.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="175.0" text="Find Collisions" />
                                              </children>
                                           </AnchorPane>
                                        </content>

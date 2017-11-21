@@ -12,9 +12,15 @@ var num_cells = 16;
 // Size of a cell in pixels.
 var cell_size_px = 35;
 
+// Variable to hold mouse position.
+var mouse_pos = [];
+
+function color_scale(color){
+    return d3.interpolateYlOrRd(d3.scaleLinear().domain([0,20]).range([0,1])(color));
+}
 var vert_margin = Math.floor((width - (num_cells*cell_size_px))/2);
 var horiz_margin = Math.floor((height - (num_cells*cell_size_px))/2);
-var grid_frame = d3.select("#grid_div").append("svg").attr("width",width).attr("height","100vh").style("display","block");
+var grid_frame = d3.select("#grid_div").append("svg").attr("width","100%").attr("height","100%").style("display","block");
 
 
 /*
@@ -28,9 +34,11 @@ function initialize(){
             var cell = {
                 xpos : (j*cell_size_px)+vert_margin,
                 ypos : (i*cell_size_px)+horiz_margin,
-                collisions : 0
+                collisions : 0,
+                index : (num_cells * j) + i
             };
             cells.push(cell);
+            //document.writeln("x: " + cell.xpos + "y: " + cell.ypos);
         }
     }
     drawGrid();
@@ -51,12 +59,73 @@ function drawGrid(){
             .attr("height",cell_size_px)
             .attr("x",cells[i].xpos)
             .attr("y",cells[i].ypos)
+            .on("mouseenter",mouseOn)
+            .on("mouseleave",mouseOff)
             .style("fill","#fff")
             .style("stroke","#000")
     }
     //document.write("" + height + "  " + width);
 }
+function mouseOn(d,i){
+    var rect_x;
+    var rect_y;
 
+    var text_x;
+    // Draw the rectangle.
+    if(d.xpos + 150 + cell_size_px + 8 > d3.select("#grid_div").node().getBoundingClientRect().width){
+        rect_x = d.xpos - (8 + 150);
+        text_x = rect_x + 7;
+    }else{
+        rect_x = d.xpos + cell_size_px + 8;
+        text_x = rect_x + 7;
+    }
+    rect_y = d.ypos + 8;
+    grid_frame
+        .append("rect")
+        .attr("x",rect_x)
+        .attr("y",rect_y)
+        .attr("rx",3)
+        .attr("ry",3)
+        .attr("width",150)
+        .attr("height",30)
+        .attr("class","hoverrect")
+        .style("fill",color_scale(d.collisions))
+        .style("stroke","#000");
+
+    grid_frame.append("text")
+        .text(function() {
+            var ranges = getHexRange(d.index);
+            return "Range: " + ranges[0] + "-" + ranges[1];
+        })
+        .attr("class","hovertext")
+        .attr("font-family","sans-serif")
+        .attr("font-size","10px")
+        .attr("x",text_x)
+        .attr("y",d.ypos + 22)
+        .attr("fill","black")
+
+    grid_frame.append("text")
+        .text(function() {
+            return d.collisions + " collisions."
+        })
+        .attr("class","hovertext")
+        .attr("font-family","sans-serif")
+        .attr("font-size","10px")
+        .attr("x",text_x)
+        .attr("y",d.ypos + 32)
+        .attr("fill","black")
+
+}
+function mouseOff(d,i){
+    d3.selectAll("text.hovertext").remove();
+    d3.selectAll("rect.hoverrect").remove();
+}
+
+function getHexRange(index){
+    var lower = index.toString(16).toUpperCase() + "000000";
+    var upper = index.toString(16).toUpperCase() + "FFFFFF";
+    return [lower,upper]
+}
 // Accepts an array of cell data, and assigns each cell[] member the data that is passed to it.
 function setCells(arr){
     for(var i = 0; i < cells.length; ++i){
@@ -70,11 +139,9 @@ function updateGrid(){
         .data(cells)
         .transition()
         .duration(1500)
-        .style("fill",
-            function(d){
-                return d3.interpolateReds(d3.scaleLinear().domain([0,4]).range([0,1])(d.collisions));
-            }
-        )
+        .style("fill",function(d){
+            return color_scale(d.collisions)
+        })
 }
 
 function generateRandCols(){

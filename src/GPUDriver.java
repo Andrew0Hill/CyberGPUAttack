@@ -64,7 +64,8 @@ public class GPUDriver {
         }
 
         // OpenCL setup
-        platform = CLPlatform.listCLPlatforms()[1];
+        platforms = CLPlatform.listCLPlatforms();
+        platform = platforms[1];
         context = CLContext.create(platform);
         device = context.getDevices()[0];
         try {
