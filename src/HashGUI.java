@@ -38,27 +38,61 @@ public class HashGUI extends Application {
         gpu = new GPUDriver();
         fxml_loader.setController(c);
         Parent root = fxml_loader.load();
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Birthday Attack Demo");
         primaryStage.setScene(new Scene(root, 960, 720));
 
+        CLPlatform[] platform_list = gpu.getPlatformList();
+        for(CLPlatform plat : platform_list){
+            c.getPlatformDropdown().getItems().add(plat.getName() + " (" + plat.version + ")");
+        }
+        c.getPlatformDropdown().getSelectionModel().selectFirst();
+
+        c.getPlatformDropdown().getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if(!newValue.equals(oldValue)){
+                    CLPlatform[] list = gpu.getPlatformList();
+                    gpu.setCLPlatform(list[(Integer) newValue]);
+                    c.getTextLog().appendText("Platform changed to: " + list[(Integer) newValue].getName()+ ".\n");
+                    setUpDeviceBox();
+                    c.getDeviceDropdown().getSelectionModel().selectFirst();
+                }
+            }
+        });
+
+        setUpDeviceBox();
+
+        c.getDeviceDropdown().getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if(!newValue.equals(oldValue) && !newValue.equals(-1)){
+                    CLDevice[] list = gpu.getDeviceList();
+                    gpu.setCLDevice(list[(Integer) newValue]);
+                    c.getTextLog().appendText("Device changed to: " + list[(Integer) newValue].getName() + ".\n");
+                }
+            }
+        });
         // Mouse event listener
         c.getStartButton().setOnMouseReleased(event -> {
                     // Create new Task to to run GPU computation in a background thread.
-                    new Thread(new Task<Void>() {
+                    new Thread(new Runnable() {
                         @Override
-                        protected Void call(){
+                        public void run() {
                             // Use Platform.runLater() to ensure that UI updates happen on the UI thread,
                             // and that the GPU computation doesn't lock up the UI thread.
-                            Platform.runLater(()->{c.getStartButton().setDisable(true);});
+                            Platform.runLater(()->{
+                                c.getStartButton().setDisable(true);
+                                c.getTextLog().appendText("Using Platform: " + gpu.platform.getName() + "\nUsing Device: " + gpu.device.getName() + "\n");
+                            });
                             // Calculate GPU hashes.
                             ArrayList<Integer> arr = gpu.calculateHashes();
                             // Update the grid on screen and re-enable the hash button.
                             Platform.runLater(()-> {
+                                c.getTextLog().appendText("Compute Complete.\nThere were " + gpu.getCollisions() + " collisions.\nTable has " + gpu.getHashMapSize() + " entries.\n");
                                 jso.call("setCells", new Object[]{arr.toArray()});
                                 jso.call("updateGrid", new Object());
                                 c.getStartButton().setDisable(false);
                             });
-                            return null;
                         }
                     }).start();
                 }
@@ -76,6 +110,14 @@ public class HashGUI extends Application {
         });
     }
 
+    public void setUpDeviceBox(){
+        CLDevice[] devices_list = gpu.getDeviceList();
+        c.getDeviceDropdown().getItems().clear();
+        for(CLDevice dev : devices_list){
+            c.getDeviceDropdown().getItems().add(dev.getName());
+        }
+        c.getDeviceDropdown().getSelectionModel().selectFirst();
+    }
     // Function runs after page has been loaded.
     public void postLoad() {
         // Get reference to the window.

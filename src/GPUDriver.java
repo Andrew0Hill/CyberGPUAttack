@@ -14,7 +14,7 @@ public class GPUDriver {
     static final long HASH_OFFSET = 2166136261L;
     static final int NUM_CELLS = 256;
     static final long ADDRESS_SPACE = 4294967296L;
-    static final int NUM_STRINGS = 1100000;
+    static final int NUM_STRINGS = 1000000;
 
     // Global and Local work sizes for OpenCL.
     static int global_size;
@@ -53,7 +53,9 @@ public class GPUDriver {
     // ArrayList to hold the number of collisions per cell in the grid.
     ArrayList<Integer> collisions_per_cell;
 
+    private int collisions;
     GPUDriver() {
+        collisions = 0;
         computed_hashes = new HashMap<>(NUM_STRINGS);
         gen = new Random();
         rand_string = new StringBuilder();
@@ -65,21 +67,44 @@ public class GPUDriver {
 
         // OpenCL setup
         platforms = CLPlatform.listCLPlatforms();
-        platform = platforms[1];
-        context = CLContext.create(platform);
-        device = context.getDevices()[0];
-        try {
-            program = context.createProgram(HashGUI.class.getResourceAsStream(KERNEL_NAME)).build();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setCLPlatform(platforms[0]);
+        System.out.println("Selected Platform: " + platforms[0].getName() + " (" + platforms[0].version + ")");
+        System.out.println("Selected Device: " + device.getName() + ".");
         calcGlobalLocalSize();
-        commandQueue = device.createCommandQueue();
-        input_strings = context.createByteBuffer(NUM_STRINGS * STRING_LENGTH, CLMemory.Mem.READ_ONLY);
         computed_hashes = new HashMap<>(NUM_STRINGS);
 
     }
 
+    public CLPlatform[] getPlatformList(){
+        return CLPlatform.listCLPlatforms();
+    }
+
+    public void setCLPlatform(CLPlatform plat){
+        platform = plat;
+        context = CLContext.create(platform);
+        // Use the first device provided by the platform as the default device.
+        device = context.getDevices()[0];
+        try{
+            program = context.createProgram(HashGUI.class.getResourceAsStream(KERNEL_NAME)).build();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        commandQueue = device.createCommandQueue();
+        input_strings = context.createByteBuffer(NUM_STRINGS * STRING_LENGTH, CLMemory.Mem.READ_ONLY);
+    }
+    public CLDevice[] getDeviceList(){
+        return context.getDevices();
+    }
+    public void setCLDevice(CLDevice devc){
+        device = devc;
+    }
+    public int getCollisions() {
+        return collisions;
+    }
+
+    public int getHashMapSize() {
+        return computed_hashes.size();
+    }
 
     // Generate a random string of length 'length' using a StringBuilder and Random.
     public String generateString(int length) {
@@ -161,14 +186,15 @@ public class GPUDriver {
             commandQueue.putWriteBuffer(input_strings, false);
             commandQueue.put1DRangeKernel(kernel, 0, global_size, local_size);
             commandQueue.putReadBuffer(output_hashes, true);
-            System.out.println("Compute complete.");
+
+            System.out.println("Compute complete");
             IntBuffer buf = output_hashes.getBuffer();
             int curr;
             File hash_output = new File("hashes.txt");
             BufferedWriter output = new BufferedWriter(new FileWriter(hash_output));
             BufferedReader input = new BufferedReader(new FileReader(new File(LOG_NAME)));
             String current;
-            int collisions = 0;
+            collisions = 0;
             while (buf.hasRemaining() && (current = input.readLine()) != null) {
                 curr = buf.get();
                 if (curr != 0) {

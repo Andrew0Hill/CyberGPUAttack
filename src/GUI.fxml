@@ -4,6 +4,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -11,7 +12,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.web.WebView?>
 
 <VBox maxHeight="720.0" maxWidth="960.0" minHeight="720.0" minWidth="960.0" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
@@ -57,7 +57,24 @@
                                           </AnchorPane>
                                        </content>
                                     </TitledPane>
-                                    <TextFlow layoutX="20.0" layoutY="14.0" prefHeight="388.0" prefWidth="200.0" />
+                                    <TitledPane animated="false" collapsible="false" layoutX="19.0" layoutY="14.0" prefHeight="350.0" prefWidth="202.0" text="Log">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="324.0" prefWidth="200.0">
+                                             <children>
+                                                <TextArea fx:id="TextLog" prefHeight="324.0" prefWidth="200.0" />
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </TitledPane>
+                                    <TitledPane animated="false" collapsible="false" layoutX="20.0" layoutY="385.0" prefHeight="79.0" prefWidth="202.0" text="OpenCL Platform">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="63.0" prefWidth="200.0">
+                                             <children>
+                                                <ChoiceBox fx:id="PlatformDropdown" layoutX="13.0" layoutY="14.0" prefHeight="25.0" prefWidth="175.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </TitledPane>
                                  </children>
                               </Pane>
                            </children>

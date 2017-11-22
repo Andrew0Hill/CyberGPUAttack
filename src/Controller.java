@@ -2,6 +2,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
@@ -23,6 +24,13 @@ public class Controller implements Initializable{
     @FXML
     private ChoiceBox DeviceDropdown;
 
+    @FXML
+    private ChoiceBox PlatformDropdown;
+
+    @FXML
+    private TextArea TextLog;
+
+
     private WebEngine engine;
 
     public void setEngineURL(URL url){
@@ -33,12 +41,16 @@ public class Controller implements Initializable{
         return StartButton;
     }
 
-    public Button getStopButton(){
-        return StopButton;
+    public ChoiceBox getPlatformDropdown() {
+        return PlatformDropdown;
     }
 
     public ChoiceBox getDeviceDropdown(){
         return DeviceDropdown;
+    }
+
+    public TextArea getTextLog() {
+        return TextLog;
     }
 
     public WebEngine getEngine(){
