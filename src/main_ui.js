@@ -10,7 +10,7 @@ var height = document.documentElement.clientHeight;
 var num_cells = 16;
 
 // Size of a cell in pixels.
-var cell_size_px = 35;
+var cell_size_px = 38;
 
 // Variable to hold mouse position.
 var mouse_pos = [];
