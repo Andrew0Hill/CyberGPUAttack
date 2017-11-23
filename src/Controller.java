@@ -6,7 +6,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
-import javax.swing.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -14,6 +13,15 @@ public class Controller implements Initializable{
 
     @FXML
     private WebView D3View;
+
+    @FXML
+    private WebView D3ViewLeft;
+
+    @FXML
+    private WebView D3ViewRight;
+
+    @FXML
+    private WebView D3ViewBottom;
 
     @FXML
     private Button StartButton;
@@ -32,6 +40,9 @@ public class Controller implements Initializable{
 
 
     private WebEngine engine;
+    private WebEngine engineLeft;
+    private WebEngine engineRight;
+    private WebEngine engineBottom;
 
     public void setEngineURL(URL url){
         //engine.load("myhtml.html");
@@ -58,13 +69,21 @@ public class Controller implements Initializable{
     }
     public void initialize(URL location, ResourceBundle resources) {
         engine = D3View.getEngine();
+        engineLeft = D3ViewLeft.getEngine();
+        engineRight = D3ViewRight.getEngine();
+        engineBottom = D3ViewBottom.getEngine();
         URL url;
         try {
             url = getClass().getResource("myhtml.html");
             engine.load(url.toString());
+            url = getClass().getResource("infohtmlleft.html");
+            engineLeft.load(url.toString());
+            url = getClass().getResource("infohtmlright.html");
+            engineRight.load(url.toString());
+            url = getClass().getResource("infohtmlbottom.html");
+            engineBottom.load(url.toString());
         }catch(Exception e){
             e.printStackTrace();
         }
-
     }
 }
