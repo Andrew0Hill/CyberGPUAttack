@@ -20,6 +20,7 @@ public class GPUDriver {
     static int global_size;
     static int local_size;
 
+    // OpenCL values.
     CLContext context;
     CLPlatform[] platforms;
     CLPlatform platform;
@@ -55,24 +56,33 @@ public class GPUDriver {
 
     private int collisions;
     GPUDriver() {
+        // Set number of collisions to 0.
         collisions = 0;
+        // Create a new HashMap to hold the computed hashes for batch.
         computed_hashes = new HashMap<>(NUM_STRINGS);
+        // Create a new Random generator to help generating random numbers.
         gen = new Random();
+        // Create a StringBuilder to build the random strings.
         rand_string = new StringBuilder();
-
+        // Holds the number of collisions per cell. Will be sent to D3 for visualization.
         collisions_per_cell = new ArrayList<>(NUM_CELLS);
+
+        // Initialize the ArrayList to 0.
         for (int i = 0; i < NUM_CELLS; ++i) {
             collisions_per_cell.add(i, 0);
         }
 
         // OpenCL setup
         platforms = CLPlatform.listCLPlatforms();
+        // Choose the first platform in the list as the default (Users can change through GUI).
         setCLPlatform(platforms[0]);
+
+        // Log information about platform and device.
         System.out.println("Selected Platform: " + platforms[0].getName() + " (" + platforms[0].version + ")");
         System.out.println("Selected Device: " + device.getName() + ".");
-        calcGlobalLocalSize();
-        computed_hashes = new HashMap<>(NUM_STRINGS);
 
+        // Calculate the global and local sizes for computation.
+        calcGlobalLocalSize();
     }
 
     public CLPlatform[] getPlatformList(){
@@ -80,8 +90,16 @@ public class GPUDriver {
     }
 
     public void setCLPlatform(CLPlatform plat){
+        // Change the CLPlatform to the one that was passed in.
         platform = plat;
+
+        // Release the current context (if it already exists).
+        if (context != null){
+            context.release();
+        }
+        // Create a new context with this platform.
         context = CLContext.create(platform);
+
         // Use the first device provided by the platform as the default device.
         device = context.getDevices()[0];
         try{
@@ -89,7 +107,10 @@ public class GPUDriver {
         }catch (IOException e){
             e.printStackTrace();
         }
+        // Build the command queue for the device.
         commandQueue = device.createCommandQueue();
+
+        // Allocate enough memory space to hold the strings we are going to pass in.
         input_strings = context.createByteBuffer(NUM_STRINGS * STRING_LENGTH, CLMemory.Mem.READ_ONLY);
     }
     public CLDevice[] getDeviceList(){

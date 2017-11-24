@@ -45,7 +45,7 @@ public class Controller implements Initializable{
     private WebEngine engineBottom;
 
     public void setEngineURL(URL url){
-        //engine.load("myhtml.html");
+        //engine.load("viz_page.html");
     }
 
     public Button getStartButton(){
@@ -74,7 +74,7 @@ public class Controller implements Initializable{
         engineBottom = D3ViewBottom.getEngine();
         URL url;
         try {
-            url = getClass().getResource("myhtml.html");
+            url = getClass().getResource("viz_page.html");
             engine.load(url.toString());
             url = getClass().getResource("infohtmlleft.html");
             engineLeft.load(url.toString());

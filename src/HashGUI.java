@@ -33,29 +33,42 @@ public class HashGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // Load the GUI FXML.
         FXMLLoader fxml_loader = new FXMLLoader(getClass().getResource("GUI.fxml"));
+
+        // Create a new Controller object.
         c = new Controller();
+        // Create a new GPUDriver object to interface with the GPU.
         gpu = new GPUDriver();
+        // Set the controller for our GUI to the one we just made.
         fxml_loader.setController(c);
         Parent root = fxml_loader.load();
         primaryStage.setTitle("Birthday Attack Demo");
         primaryStage.setScene(new Scene(root, 960, 720));
 
+        // Get the available list of OpenCL platforms.
         CLPlatform[] platform_list = gpu.getPlatformList();
+
+        // Add each platform to the dropdown menu
         for(CLPlatform plat : platform_list){
             c.getPlatformDropdown().getItems().add(plat.getName() + " (" + plat.version + ")");
         }
+        // Select the first OpenCL platform by default.
         c.getPlatformDropdown().getSelectionModel().selectFirst();
 
+        // Handler for the user selecting a new option in the dropdown box.
         c.getPlatformDropdown().getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 if(!newValue.equals(oldValue)){
+                    // Get list of platforms
                     CLPlatform[] list = gpu.getPlatformList();
+                    // Set platform to the one selected by the user.
                     gpu.setCLPlatform(list[(Integer) newValue]);
+                    // Log this in the text log.
                     c.getTextLog().appendText("Platform changed to: " + list[(Integer) newValue].getName()+ ".\n");
+                    // Reset the device box to show devices associated with this platform.
                     setUpDeviceBox();
-                    c.getDeviceDropdown().getSelectionModel().selectFirst();
                 }
             }
         });
@@ -66,8 +79,11 @@ public class HashGUI extends Application {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 if(!newValue.equals(oldValue) && !newValue.equals(-1)){
+                    // List all devices on this platform.
                     CLDevice[] list = gpu.getDeviceList();
+                    // Set the device to the new one selected by the user.
                     gpu.setCLDevice(list[(Integer) newValue]);
+                    // Log the change.
                     c.getTextLog().appendText("Device changed to: " + list[(Integer) newValue].getName() + ".\n");
                 }
             }
@@ -122,14 +138,7 @@ public class HashGUI extends Application {
     public void postLoad() {
         // Get reference to the window.
         jso = (JSObject) c.getEngine().executeScript("window");
-
-
-        /*
-         * Use JSObject to call the "test" Javascript method.
-         * The 'call' method expects an Object[] containing each argument.
-         * To pass an array as a parameter, we create a new Object[] with the first element
-         * being a Integer[].
-         */
+        // Use the JSObject to call the initialize function on our html page.
         jso.call("initialize", new Object());
     }
 
