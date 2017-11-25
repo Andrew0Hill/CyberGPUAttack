@@ -1,5 +1,5 @@
 var w = 410;
-var h = 400;
+var h = 300;
 var x = d3.scale.linear().domain([0, 70]).range([0,w]);
 var y = d3.scale.linear().domain([0, 1]).range([h,0]);
 

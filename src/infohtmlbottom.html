@@ -1,28 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <style>
+        p{
+            font-family: "Helvetica";
+        }
+        h2{
+            font-family: "Helvetica";
+        }
+    </style>
 </head>
-<body style="background-color:LightGray;">
+<body style="background-color:#f4f4f4;">
 
-<h1 style="background-color:DodgerBlue;">Birthday Attack</h1>
+<h2 style="background-color:DodgerBlue;">Birthday Paradox</h2>
 
-<p>"A birthday attack is a type of cryptographic attack that exploits the mathematics behind the <mark>birthday problem</mark> in probability theory. This attack can be used to abuse communication between two or more parties. The attack depends on the higher likelihood of collisions found between random attack attempts and a fixed degree of permutations (<mark>pigeonholes</mark>). With a birthday attack, it is possible to find a collision of a <mark>hash function</mark> in &radic;2<sup>n</sup> = 2<sup>n/2</sup> being the classical preimage resistance security. There is a general (though disputed) result that quantum computers can perform birthday attacks, thus breaking collision resistance, in &#8731;2<sup>n</sup> = 2<sup>n/3</sup>." -- Wikipedia</p>
 
-<h2 style="background-color:DodgerBlue;">Birthday Problem</h2>
+<p>The birthday problem is a probability paradox in which, given a group of <i>n</i> randomly chosen people, some pair will 
+share the same birthday (day and month). Contrary to expectation, only 23 people are required for there to be a 50% probability that two people in the group share a birthday.
+This occurs because the shared birthday is not chosen in advance, so the probability of a shared birthday is larger than expected. We can write this probability as:</p>
 
-<p>The birthday problem is a probability paradox in which, given a set of <i>n</i> randomly chosen people, some pair will share the same birthday (day and month). By the pigeonhole principle, the probability reaches 100% when the number of people reaches 367 (since there are only 366 possible birthdays with the inclusion of February 29<sup>th</sup>). However, a probability of 99.9% is met with only 70 people, and a probability of 50% is met with a mere 23 people. These conclusions are based on the assumption that each day of the year (excluding February 29<sup>th</sup>) is equally probable for a birthday.</p>
+$$P(x) = 1- {365 * 364 * ... * (365 - n + 1) \over (365^n)} $$
 
-<h2 style="background-color:DodgerBlue;">Pigeonhole Principle</h2>
+<p>
+This means that we reach a 99.9% probability of a shared birthday in a group of around 70 people.
+</p> 
 
-<p>The pigeonhole principle is an example of a counting argument which states that if <i>n</i> item are put into <i>m</i> containers, with <i>n</i> being larger than <i>m</i>, at least one container must contain more than one item.</p>
+<h2 style="background-color:DodgerBlue;">Birthday Attack</h2>
 
-<h2 style="background-color:DodgerBlue;">Hash Collision</h2>
+<p>A birthday attack is a special type of brute-force hash collision attack that is possible because of the result
+of the result of the birthday problem. Within a hash space, we can find two values that have the same hash in fewer attempts than typically expected.</p> <p> For example, for a 32-bit hash with ~4.2 billion possible values, there is a 50% chance of finding a collision with only ~80,000 attempts.</p>
 
-<p>A hash function is any function that can be used to map data of an arbitrary size to data of a fixed size.</p>
+<h2 style="background-color:DodgerBlue;">Finding Collisions with OpenCL</h2>
+<p>
+Although the probability of finding a hash collision increases when using a Birthday Attack, the process still requires performing a large number of 
+hashes and storing the results for comparison later. 
+</p>
+<p> 
+A GPU (Graphical Processing Unit) can be used to expedite this process. GPUs were originally created to allow complex graphics to be
+rendered on a screen. Many computer graphics algorithms (e.g. lighting of a 3D scene) require that values be computed for every pixel on the screen.
+For any screen with a large resolution (1920x1080 screen has ~2,000,000 pixels) this becomes too large of a task to perform efficiently with a CPU's limited number of threads. 
+</p>
+<p>
+GPUs solve this problem by utilizing a large number of cores. A typical GPU has hundreds to thousands of cores, whereas a typical CPU has 2-8 cores. Each GPU core is individually weaker than a CPU core, but together they
+can perform tasks in parallel much faster than they can be computed sequentially on a CPU.
+</p>
+<p>
+Frameworks like OpenCL and CUDA allow GPUs to be used for arbitrary parallel computations. In our project, we use OpenCL
+to compute large batches of hash values in parallel. We then compare these hashed values to find collisions. Because we use a comparatively small hash,
+we can compute a large number of collisions very quickly. 
+</p>
+<h2 style="background-color:DodgerBlue;">Scalability</h2>
+<p>
+This process of finding hash collsions on a GPU is scalable to larger GPUs, or even clusters of multiple GPUs. These multi GPU setups are commonly used for breaking hash algorithms. Unfortunately,
+hash algorithms double in complexity for every bit added, which means that a 64-bit hash is 2<sup>32</sup> times harder to solve than a 32-bit hash. The recent SHA-1 collision from Google required the equivalent of
+6500 years of time on a CPU, as well as 110 years on a GPU to solve. This process was still ~100,000 times faster than a brute-force attack. 
+</p>
+<h2 style="background-color:DodgerBlue;">Hash Visualization</h2>
+<p>
+For our visualization, we chose to use the FNV-1a hash, which is a lightweight non-cryptographic hash. This hash
+is suitable for a demonstration because the hash space is small relative to most popular hashes like MD5 and SHA-256, and it is also computationally light.
 
-<h2 style="background-color:DodgerBlue;">Collision</h2>
-
-<p>A collision occurs when two different inputs to a function produce the same output (in this instance, a hash value).</p>
-
+A 32-bit hash has $$2^{32} = 4294967296$$ possible values. In our visualization, we break this hash space up into a 16x16 grid, so each grid cell has
+$$2^{24} = 16777216$$ possible values. Each time the user presses the button, the program computes 1,000,000 new hash values and inserts them into a table to check for collisions.
+As each cell receives collisions, it will change color. The shade of yellow or red represents the density of collisions in this space.
 </body>
 </html>
