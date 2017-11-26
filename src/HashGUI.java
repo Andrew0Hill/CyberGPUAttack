@@ -119,7 +119,7 @@ public class HashGUI extends Application {
                                 c.getCollisionsFound().appendText(Integer.toString(gpu.getCollisions()));
 
                                 c.getCollisionPct().clear();
-                                c.getCollisionPct().appendText(String.format("%,.5f%%\n",((double) gpu.getCollisions() / gpu.getHashesPerformed())));
+                                c.getCollisionPct().appendText(String.format("%,.5f%%\n",((double) gpu.getCollisions() / gpu.getHashesPerformed()) * 100));
 
                                 // Re-enable the button.
                                 c.getStartButton().setDisable(false);

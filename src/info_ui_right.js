@@ -1,6 +1,6 @@
 var w = 410;
 var h = 300;
-var x = d3.scale.linear().domain([Math.pow(10,18), Math.pow(10,19.78)]).range([0,w]);
+var x = d3.scale.linear().domain([0, 2*Math.pow(10,5)]).range([0,w]);
 var y = d3.scale.linear().domain([0, 1]).range([h,0]);
 
 var pad = 50;
@@ -25,7 +25,7 @@ make_mouseover_guides();
 function make_birthday_function(total) {
   var e = Math.E, pow = Math.pow;
   return (function(xi) {
-      return 1 - (pow(e,-(pow(xi,2)/(3.4 * pow(10,38)))))
+      return 1 - (pow(e,-(pow(xi,2)/(2*(4294967296)))))
     });
 }
 
@@ -63,13 +63,12 @@ function make_mouseover_guides() {
   blank_legend_values();
 
   var format_5f = d3.format(".5f");
-  var format_e = d3.format (".5e");
 
   function update_legend_values() {
     var xi = x.invert(d3.svg.mouse(this)[0]);
 
     legend
-        .text("Number of Passwords: "+format_e(xi) + "     |     Probability of a Hash Collision: "+format_5f(continuous(xi) * 100)+"%");
+        .text("Number of Strings: "+ d3.format(".0f")(xi) + "     |     Probability of a Hash Collision: "+format_5f(continuous(xi) * 100)+"%");
 
     guides
         .attr("transform", "translate("+(x(xi))+",0)")
@@ -81,7 +80,7 @@ function make_mouseover_guides() {
 
   function blank_legend_values() {
     legend
-        .text("Assuming a MD5 hash (128 bits long = 3.4 * 10^38 possible hashes)")
+        .text("FNV-1a Hash (32 bits long = 2^32 = 4,294,967,296 possible values)")
 
     guides
         .attr("visibility", "hidden")

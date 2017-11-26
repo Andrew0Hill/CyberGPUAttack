@@ -25,7 +25,7 @@ make_mouseover_guides();
 function make_birthday_function(total) {
   var e = Math.E, pow = Math.pow;
   return (function(xi) {
-      return 1 - (pow(e,-(pow(xi,2)/365)))
+      return 1 - (pow(e,-(pow(xi,2)/(2*365))))
     });
 }
 
@@ -68,7 +68,7 @@ function make_mouseover_guides() {
     var xi = x.invert(d3.svg.mouse(this)[0]);
 
     legend
-        .text("Number of People: "+format_5f(xi) + "     |     Probability of a Match (Same Birthday): "+format_5f(continuous(xi) * 100)+"%");
+        .text("Number of People: "+ d3.format(".2f")(xi) + "     |     Probability of a Match (Same Birthday): "+format_5f(continuous(xi) * 100)+"%");
 
     guides
         .attr("transform", "translate("+(x(xi))+",0)")
