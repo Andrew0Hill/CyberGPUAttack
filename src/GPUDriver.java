@@ -33,6 +33,8 @@ public class GPUDriver {
     // Length of the strings to generate.
     static final int STRING_LENGTH = 12;
 
+    static int hashes_performed = 0;
+
     // Name of OpenCL Kernel file.
     static final String KERNEL_NAME = "HashKernel.cl";
 
@@ -54,6 +56,10 @@ public class GPUDriver {
     // ArrayList to hold the number of collisions per cell in the grid.
     ArrayList<Integer> collisions_per_cell;
 
+    // ArrayList of Collision object to hold the current collisions for this batch of hashes.
+    // This is used for the list of collisions, and is reset on every batch.
+    ArrayList<Collision> batch_collisions;
+
     private int collisions;
     GPUDriver() {
         // Set number of collisions to 0.
@@ -66,6 +72,8 @@ public class GPUDriver {
         rand_string = new StringBuilder();
         // Holds the number of collisions per cell. Will be sent to D3 for visualization.
         collisions_per_cell = new ArrayList<>(NUM_CELLS);
+        // Holds the collisions generated in this batch of hashes.
+        batch_collisions = new ArrayList<>();
 
         // Initialize the ArrayList to 0.
         for (int i = 0; i < NUM_CELLS; ++i) {
@@ -83,6 +91,10 @@ public class GPUDriver {
 
         // Calculate the global and local sizes for computation.
         calcGlobalLocalSize();
+    }
+
+    public ArrayList<Collision> getBatch_collisions() {
+        return batch_collisions;
     }
 
     public CLPlatform[] getPlatformList(){
@@ -167,6 +179,9 @@ public class GPUDriver {
         device = d;
     }
 
+    public int getHashesPerformed(){
+        return hashes_performed;
+    }
     public void calcGlobalLocalSize() {
         // Set the local_size
         local_size = Math.min(device.getMaxWorkGroupSize(), 256);
@@ -209,18 +224,23 @@ public class GPUDriver {
             commandQueue.putReadBuffer(output_hashes, true);
 
             System.out.println("Compute complete");
+
+
             IntBuffer buf = output_hashes.getBuffer();
             int curr;
             File hash_output = new File("hashes.txt");
             BufferedWriter output = new BufferedWriter(new FileWriter(hash_output));
             BufferedReader input = new BufferedReader(new FileReader(new File(LOG_NAME)));
             String current;
+            batch_collisions.clear();
+
             collisions = 0;
             while (buf.hasRemaining() && (current = input.readLine()) != null) {
                 curr = buf.get();
                 if (curr != 0) {
                     output.write(Integer.toHexString(curr) + "\n");
                     if (computed_hashes.get(curr) != null) {
+                        batch_collisions.add(new Collision(current,computed_hashes.get(curr),Integer.toHexString(curr)));
                         ++collisions;
                         insertIntoCell(curr);
                         //System.out.println("Collision between " + computed_hashes.get(curr) + " and " + current);
@@ -240,6 +260,7 @@ public class GPUDriver {
 
 
         System.out.println("Complete. Hash table has " + computed_hashes.size() + " entries.");
+        hashes_performed += NUM_STRINGS;
         return collisions_per_cell;
 
 

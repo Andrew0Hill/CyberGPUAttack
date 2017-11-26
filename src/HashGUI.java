@@ -7,22 +7,21 @@ Calculates random string values, then send array to GPU for hashing.
 import com.jogamp.opencl.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
-
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.function.Consumer;
 
 public class HashGUI extends Application {
     // Hashing constants
@@ -102,17 +101,73 @@ public class HashGUI extends Application {
                             });
                             // Calculate GPU hashes.
                             ArrayList<Integer> arr = gpu.calculateHashes();
-                            // Update the grid on screen and re-enable the hash button.
                             Platform.runLater(()-> {
+                                // Print out log text.
                                 c.getTextLog().appendText("Compute Complete.\nThere were " + gpu.getCollisions() + " collisions.\nTable has " + gpu.getHashMapSize() + " entries.\n");
+                                // Update the grid on screen.
                                 jso.call("setCells", new Object[]{arr.toArray()});
                                 jso.call("updateGrid", new Object());
+                                // Add each collision to the table for users to see.
+                                c.getCollisionTable().getItems().addAll(gpu.getBatch_collisions());
+
+                                // Fill in the number of hashes performed.
+                                c.getHashesPerformed().clear();
+                                c.getHashesPerformed().appendText(Integer.toString(gpu.getHashesPerformed()));
+
+                                // Fill in the number of collisions found.
+                                c.getCollisionsFound().clear();
+                                c.getCollisionsFound().appendText(Integer.toString(gpu.getCollisions()));
+
+                                c.getCollisionPct().clear();
+                                c.getCollisionPct().appendText(String.format("%,.5f%%\n",((double) gpu.getCollisions() / gpu.getHashesPerformed())));
+
+                                // Re-enable the button.
                                 c.getStartButton().setDisable(false);
                             });
                         }
                     }).start();
                 }
         );
+        // Set up the columns of the table so that text values are displayed correctly.
+        c.getString1Column().setCellValueFactory(new PropertyValueFactory<Collision,String>("value_one"));
+        c.getString2Column().setCellValueFactory(new PropertyValueFactory<Collision,String>("value_two"));
+        c.getHashValueColumn().setCellValueFactory(new PropertyValueFactory<Collision,String>("hash_value"));
+
+        c.getCollisionTable().setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                // On mouse click, get the selected row, and copy it over to the hash collision checker.
+                Collision temp_col = (Collision) c.getCollisionTable().getSelectionModel().getSelectedItem();
+
+                // Clear both fields first.
+                c.getString1Field().clear();
+                c.getString2Field().clear();
+
+                // Add each string to the appropriate field.
+                c.getString1Field().appendText(temp_col.value_one.get());
+                c.getString2Field().appendText(temp_col.value_two.get());
+            }
+        });
+
+        c.getRunHashButton().setOnMouseReleased((event) -> {
+            c.getHashResultField().clear();
+            String h1 = new String();
+            String h2 = new String();
+            if (!c.getString1Field().getText().isEmpty()){
+                h1 = FNVHash.hash(c.getString1Field().getText());
+                c.getHashResultField().appendText("String 1 Hash: " + h1 + "\n");
+            }
+            if (!c.getString2Field().getText().isEmpty()){
+                h2 = FNVHash.hash(c.getString2Field().getText());
+                c.getHashResultField().appendText("String 2 Hash: " + h2 + "\n");
+            }
+            if(h1.equals(h2)){
+                c.getHashResultField().appendText("Collision Occurred!");
+            }
+
+
+
+        });
         primaryStage.setResizable(false);
         primaryStage.show();
         // Wait until the page is fully loaded before continuing.

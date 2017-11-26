@@ -1,8 +1,6 @@
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
@@ -30,6 +28,9 @@ public class Controller implements Initializable{
     private Button StopButton;
 
     @FXML
+    private Button RunHashButton;
+
+    @FXML
     private ChoiceBox DeviceDropdown;
 
     @FXML
@@ -38,6 +39,38 @@ public class Controller implements Initializable{
     @FXML
     private TextArea TextLog;
 
+    @FXML
+    private TextArea HashResultField;
+
+    @FXML
+    private TextField String1Field;
+
+    @FXML
+    private TextField String2Field;
+
+    @FXML
+    private TextField HashesPerformed;
+
+    @FXML
+    private TextField CollisionsFound;
+
+    @FXML
+    private TextField ExpCollisions;
+
+    @FXML
+    private TextField CollisionPct;
+
+    @FXML
+    private TableColumn String1Column;
+
+    @FXML
+    private TableColumn String2Column;
+
+    @FXML
+    private TableColumn HashValueColumn;
+
+    @FXML
+    private TableView CollisionTable;
 
     private WebEngine engine;
     private WebEngine engineLeft;
@@ -56,12 +89,58 @@ public class Controller implements Initializable{
         return PlatformDropdown;
     }
 
-    public ChoiceBox getDeviceDropdown(){
-        return DeviceDropdown;
+    public ChoiceBox getDeviceDropdown(){ return DeviceDropdown; }
+
+    public TableColumn getHashValueColumn() {
+        return HashValueColumn;
+    }
+
+    public TableColumn getString1Column() {
+        return String1Column;
+    }
+
+    public TableColumn getString2Column() {
+        return String2Column;
+    }
+
+    public TableView getCollisionTable() {
+        return CollisionTable;
+    }
+
+    public TextArea getHashResultField() {
+        return HashResultField;
+    }
+
+    public TextField getCollisionPct() {
+        return CollisionPct;
+    }
+
+    public TextField getCollisionsFound() {
+        return CollisionsFound;
+    }
+
+    public TextField getExpCollisions() {
+        return ExpCollisions;
+    }
+
+    public TextField getHashesPerformed() {
+        return HashesPerformed;
+    }
+
+    public TextField getString1Field() {
+        return String1Field;
+    }
+
+    public TextField getString2Field() {
+        return String2Field;
     }
 
     public TextArea getTextLog() {
         return TextLog;
+    }
+
+    public Button getRunHashButton() {
+        return RunHashButton;
     }
 
     public WebEngine getEngine(){
