@@ -9,7 +9,7 @@ kernel void compute_hashes(global const char* strings, global int* hashes, int s
     }
     // Constant hash offset from FNV-1a specification.
     unsigned int hash = offset;
-    // Counter for byte within the 6 byte string
+    // Counter for byte within the byte string
     int count = 0;
     while(count < string_size){
         hash = hash ^ strings[arr_pos+count];

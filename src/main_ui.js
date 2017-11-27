@@ -35,7 +35,7 @@ function initialize(){
                 xpos : (j*cell_size_px)+vert_margin,
                 ypos : (i*cell_size_px)+horiz_margin,
                 collisions : 0,
-                index : (num_cells * j) + i
+                index : (num_cells * i) + j
             };
             cells.push(cell);
             //document.writeln("x: " + cell.xpos + "y: " + cell.ypos);

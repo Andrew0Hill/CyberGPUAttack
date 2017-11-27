@@ -138,14 +138,15 @@ public class HashGUI extends Application {
             public void handle(MouseEvent event) {
                 // On mouse click, get the selected row, and copy it over to the hash collision checker.
                 Collision temp_col = (Collision) c.getCollisionTable().getSelectionModel().getSelectedItem();
+                if(temp_col != null) {
+                    // Clear both fields first.
+                    c.getString1Field().clear();
+                    c.getString2Field().clear();
 
-                // Clear both fields first.
-                c.getString1Field().clear();
-                c.getString2Field().clear();
-
-                // Add each string to the appropriate field.
-                c.getString1Field().appendText(temp_col.value_one.get());
-                c.getString2Field().appendText(temp_col.value_two.get());
+                    // Add each string to the appropriate field.
+                    c.getString1Field().appendText(temp_col.value_one.get());
+                    c.getString2Field().appendText(temp_col.value_two.get());
+                }
             }
         });
 

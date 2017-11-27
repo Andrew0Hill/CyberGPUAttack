@@ -42,7 +42,7 @@ rendered on a screen. Many computer graphics algorithms (e.g. lighting of a 3D s
 For any screen with a large resolution (1920x1080 screen has ~2,000,000 pixels) this becomes too large of a task to perform efficiently with a CPU's limited number of threads. 
 </p>
 <p>
-GPUs solve this problem by utilizing a large number of cores. A typical GPU has hundreds to thousands of cores, whereas a typical CPU has 2-8 cores. Each GPU core is individually weaker than a CPU core, but together they
+GPUs solve this problem by performing these operations in parallel using a large number of cores. A typical GPU has hundreds to thousands of cores, whereas a typical CPU has 2-8 cores. Each GPU core is individually weaker than a CPU core, but together they
 can perform tasks in parallel much faster than they can be computed sequentially on a CPU.
 </p>
 <p>
@@ -52,7 +52,7 @@ we can compute a large number of collisions very quickly.
 </p>
 <h2 style="background-color:DodgerBlue;">Scalability</h2>
 <p>
-This process of finding hash collsions on a GPU is scalable to larger GPUs, or even clusters of multiple GPUs. These multi GPU setups are commonly used for breaking hash algorithms. Unfortunately,
+This process of finding hash collisions on a GPU is scalable to larger GPUs, or even clusters of multiple GPUs. These multi GPU setups are commonly used for breaking hash algorithms. Unfortunately,
 hash algorithms double in complexity for every bit added, which means that a 64-bit hash is 2<sup>32</sup> times harder to solve than a 32-bit hash. The recent SHA-1 collision from Google required the equivalent of
 6500 years of time on a CPU, as well as 110 years on a GPU to solve. This process was still ~100,000 times faster than a brute-force attack. 
 </p>
@@ -61,8 +61,8 @@ hash algorithms double in complexity for every bit added, which means that a 64-
 For our visualization, we chose to use the FNV-1a hash, which is a lightweight non-cryptographic hash. This hash
 is suitable for a demonstration because the hash space is small relative to most popular hashes like MD5 and SHA-256, and it is also computationally light.
 
-A 32-bit hash has $$2^{32} = 4294967296$$ possible values. In our visualization, we break this hash space up into a 16x16 grid, so each grid cell has
-$$2^{24} = 16777216$$ possible values. Each time the user presses the button, the program computes 1,000,000 new hash values and inserts them into a table to check for collisions.
+A 32-bit hash has $$2^{32} = 4,294,967,296$$ possible values. In our visualization, we break this hash space up into a 16x16 grid, so each grid cell has
+$$2^{24} = 16,777,216$$ possible values. Each time the user presses the button, the program computes 1,000,000 new hash values and inserts them into a table to check for collisions.
 As each cell receives collisions, it will change color. The shade of yellow or red represents the density of collisions in this space.
 </body>
 </html>
