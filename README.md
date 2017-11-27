@@ -42,4 +42,5 @@ To setup the project to run in IntelliJ:
 manually if the SDK does not show up.
 2. Set `Project Language Level` (Just below the `Project SDK` setting) to 8 or above.
 3. Set the 'Compiler Output Directory' (Just below `Project Language Level`) to the `out/` folder inside the project.
-4. Hit `Apply` and `OK`, and then build and run the code!
+4. Right click on the `src/` folder and click Mark as Sources Root.
+5. Hit `Apply` and `OK`, and then build and run the code!

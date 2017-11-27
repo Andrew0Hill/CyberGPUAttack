@@ -149,7 +149,6 @@ public class HashGUI extends Application {
                 }
             }
         });
-
         c.getRunHashButton().setOnMouseReleased((event) -> {
             c.getHashResultField().clear();
             String h1 = new String();

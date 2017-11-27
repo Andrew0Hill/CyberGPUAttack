@@ -55,9 +55,6 @@ public class Controller implements Initializable{
     private TextField CollisionsFound;
 
     @FXML
-    private TextField ExpCollisions;
-
-    @FXML
     private TextField CollisionPct;
 
     @FXML
@@ -117,10 +114,6 @@ public class Controller implements Initializable{
 
     public TextField getCollisionsFound() {
         return CollisionsFound;
-    }
-
-    public TextField getExpCollisions() {
-        return ExpCollisions;
     }
 
     public TextField getHashesPerformed() {

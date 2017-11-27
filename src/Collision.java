@@ -1,4 +1,3 @@
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -17,9 +16,7 @@ public class Collision {
         hash_value.setValue(hv.toUpperCase());
     }
 
-    public StringProperty value_oneProperty(){
-        return value_one;
-    }
+    public StringProperty value_oneProperty(){ return value_one; }
 
     public StringProperty value_twoProperty(){
         return value_two;
